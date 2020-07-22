@@ -6,7 +6,6 @@ import {
   Route,
 } from 'react-router-dom';
 import CharactersListe from './Component/CharactersListe';
-import './App.css';
 
 function App() {
   return (
