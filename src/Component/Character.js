@@ -1,8 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Character({ id }) {
     const [character, setCharacter] = useState([]);
+
+    const notifySuccess = () => toast.success('Enregistrement reussi', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    
+      const notifyError = () => toast.error('Enregistrement a échoué', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      toast.configure();
 
     useEffect(() => {
         Axios.get(`http://localhost:8000/characters/${id}`)
@@ -10,10 +33,11 @@ function Character({ id }) {
                 setCharacter(res.data);
             })
     }, [id]);
+    
     return (
         id !== null ?
-            <>
-                <form onSubmit={(event) => {
+            <div className="labaldivCharacter">
+                <form className="labaldivCharacter" onSubmit={(event) => {
                    
                     Axios.put(`http://localhost:8000/characters/${id}`, { 
                     characterPhysique: character.characterPhysique,
@@ -21,8 +45,8 @@ function Character({ id }) {
                     characterSocial: character.characterSocial,
                     characterMental: character.characterMental,
                     characterStory: character.characterStory, })
-                        .then(() => console.log('changement confirmée'))
-                        .catch((err) => console.log(err)); 
+                        .then(() => notifySuccess())
+                        .catch((err) => notifyError()); 
                         event.preventDefault();
                 }}
                 >
@@ -43,10 +67,10 @@ function Character({ id }) {
                     <input className="characterMental" type="number" name="number" id="number" max="50" min="10" onChange={(event) => setCharacter({ ...character, characterMental: event.target.value })} value={character.characterMental} />
 
                     <h1>Histoire:</h1>
-                    <input className="characterStory" type="text" name="text" id="text" onChange={(event) => setCharacter({ ...character, characterStory: event.target.value })} value={character.characterStory} />
+                    <textarea className="characterStory" onChange={(event) => setCharacter({ ...character, characterStory: event.target.value })} value={character.characterStory}></textarea>
                     <button type="submit" className="buttonValider">Valider</button>
                 </form>
-            </>
+            </div>
             : <p>selectioné un personnage</p>
     )
 }
