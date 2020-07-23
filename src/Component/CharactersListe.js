@@ -4,11 +4,14 @@ import './Style.css';
 import Character from './Character';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TextField from '@material-ui/core/TextField';
+import { Autocomplete } from '@material-ui/lab';
+
 
 function CharactersListe() {
   const [characters, setCharacters] = useState([]);
   const [idCharacter, setIdCharacter] = useState(null);
- 
+
 
   const notifySuccess = () => toast.success('Enregistrement reussi', {
     position: "top-right",
@@ -51,13 +54,40 @@ function CharactersListe() {
     Axios.get(`http://localhost:8000/characters`)
       .then((res) => {
         setCharacters(res.data);
-      },[characters]);
+      }, [characters]);
 
   });
+  const [value, setValue] = React.useState(null);
   return (
     <div class="characterList">
       <div class="menuList">
         <h1 className="titre">Memoria</h1>
+
+        <div className="Searchbar">
+          <Autocomplete
+            freeSolo
+            id="free-solo-2-demo"
+            disableClearable
+            value={value}
+            onChange={(event, newValue) => {
+              setIdCharacter(newValue.id);
+            }}
+            getOptionSelected={(option, value) => option.characterName === value.characterName}
+            getOptionLabel={(option) => option.characterName}
+            options={characters}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search input"
+                margin="normal"
+                variant="outlined"
+                InputProps={{ ...params.InputProps, type: 'search' }}
+              />
+            )}
+          />
+        </div>
+
+
         <button className="newCharacter" onClick={() => newCharacter()
         }
         >nouveau personnage
